@@ -1,3 +1,4 @@
+// Filters.jsx
 import React from 'react';
 
 const Filters = ({
@@ -6,91 +7,114 @@ const Filters = ({
   selectedStrength,
   setSelectedStrength,
   selectedEngagement,
-  setSelectedEngagement
+  setSelectedEngagement,
 }) => {
-  const industries = [
-    'All',
-    'IT Services',
-    'Consulting',
-    'Technology'
-  ];
 
-  const strengths = [
-   
-    'Strong',
-    'Moderate',
-    'Weak'
-  ];
-
-  const engagementStatuses = [
-
-    'Current',
-    'Past'
-  ];
+  const FilterButton = ({ label, isActive, onClick }) => (
+    <button
+      className={`px-4 py-2 rounded-md transition-all ${
+        isActive
+          ? 'bg-blue-600 text-white shadow-md'
+          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+      }`}
+      onClick={onClick}
+    >
+      {label}
+    </button>
+  );
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100 mb-6">
-      <div className="flex flex-col md:flex-row md:items-start md:space-x-4 md:space-y-0 space-y-4">
+    <div className="bg-white p-4 rounded-lg shadow-sm mb-6 border border-gray-200">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Industry Filter */}
-        <div className="flex-1 min-w-[220px]">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Industry</label>
+        <div>
+          <h3 className="font-medium text-gray-700 mb-2">Industry</h3>
           <div className="flex flex-wrap gap-2">
-            {industries.map((industry) => (
-              <button
-                key={industry}
-                onClick={() => setSelectedIndustry(industry)}
-                className={`px-3 py-1.5 text-xs sm:text-sm rounded-full transition-colors ${
-                  selectedIndustry === industry
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {industry}
-              </button>
-            ))}
+            <FilterButton
+              label="All"
+              isActive={selectedIndustry === 'All'}
+              onClick={() => setSelectedIndustry('All')}
+            />
+            <FilterButton
+              label="IT Services"
+              isActive={selectedIndustry === 'IT Services'}
+              onClick={() => setSelectedIndustry('IT Services')}
+            />
+            <FilterButton
+              label="Consulting"
+              isActive={selectedIndustry === 'Consulting'}
+              onClick={() => setSelectedIndustry('Consulting')}
+            />
+            <FilterButton
+              label="Technology"
+              isActive={selectedIndustry === 'Technology'}
+              onClick={() => setSelectedIndustry('Technology')}
+            />
           </div>
         </div>
 
+        {/* Strength Filter */}
+        <div>
+          <h3 className="font-medium text-gray-700 mb-2">Strength</h3>
+          <div className="flex flex-wrap gap-2">
+            <FilterButton
+              label="All"
+              isActive={selectedStrength === 'All'}
+              onClick={() => setSelectedStrength('All')}
+            />
+            <FilterButton
+              label="Strong"
+              isActive={selectedStrength === 'strong'}
+              onClick={() => setSelectedStrength('strong')}
+            />
+            <FilterButton
+              label="Moderate"
+              isActive={selectedStrength === 'moderate'}
+              onClick={() => setSelectedStrength('moderate')}
+            />
+            <FilterButton
+              label="Weak"
+              isActive={selectedStrength === 'weak'}
+              onClick={() => setSelectedStrength('weak')}
+            />
+          </div>
+        </div>
+
+        {/* Engagement Filter */}
+        <div>
+          <h3 className="font-medium text-gray-700 mb-2">Engagement</h3>
+          <div className="flex flex-wrap gap-2">
+            <FilterButton
+              label="All"
+              isActive={selectedEngagement === 'All'}
+              onClick={() => setSelectedEngagement('All')}
+            />
+            <FilterButton
+              label="Current"
+              isActive={selectedEngagement === 'current'}
+              onClick={() => setSelectedEngagement('current')}
+            />
+            <FilterButton
+              label="Past"
+              isActive={selectedEngagement === 'past'}
+              onClick={() => setSelectedEngagement('past')}
+            />
+          </div>
+        </div>
+      </div>
       
-
-        {/* Relationship Strength Filter */}
-        <div className="flex-1 min-w-[160px] md:border-l md:pl-4 md:border-gray-200">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Strength</label>
-          <div className="flex flex-wrap gap-2">
-            {strengths.map((strength) => (
-              <button
-                key={strength}
-                onClick={() => setSelectedStrength(strength.toLowerCase())}
-                className={`px-3 py-1.5 text-xs sm:text-sm rounded-full transition-colors ${
-                  selectedStrength === strength
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {strength}
-              </button>
-            ))}
-          </div>
-        </div>
-          {/* Engagement Status Filter */}
-          <div className="flex-1 min-w-[160px] md:border-l md:pl-4 md:border-gray-200">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Engagement</label>
-          <div className="flex flex-wrap gap-2">
-            {engagementStatuses.map((status) => (
-              <button
-                key={status}
-                onClick={() => setSelectedEngagement(status.toLowerCase())}
-                className={`px-3 py-1.5 text-xs sm:text-sm rounded-full transition-colors ${
-                  selectedEngagement === status
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {status}
-              </button>
-            ))}
-          </div>
-        </div>
+      {/* Reset Filters Button */}
+      <div className="mt-4 text-right">
+        <button
+          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+          onClick={() => {
+            setSelectedIndustry('All');
+            setSelectedStrength('All');
+            setSelectedEngagement('All');
+          }}
+        >
+          Reset Filters
+        </button>
       </div>
     </div>
   );

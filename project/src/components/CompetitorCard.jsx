@@ -1,111 +1,98 @@
+// CompetitorCard.jsx
 import React, { useState } from 'react';
-import { ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 
 const CompetitorCard = ({ competitor }) => {
   const [expanded, setExpanded] = useState(false);
 
-  const getRelationshipBadgeColor = (strength) => {
-    switch (strength) {
-      case 'strong':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'moderate':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'weak':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-      default:
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-    }
+  // Determine relationship strength styles
+  const getRelationshipBadge = (strength) => {
+    const styles = {
+      strong: 'bg-green-100 text-green-800 border-green-500',
+      moderate: 'bg-yellow-100 text-yellow-800 border-yellow-500',
+      weak: 'bg-red-100 text-red-800 border-red-500'
+    };
+    
+    return `px-3 py-1 text-sm font-medium rounded-full border ${styles[strength] || 'bg-gray-100 text-gray-800 border-gray-500'}`;
   };
 
-  const getEvidenceTypeIcon = (type) => {
-    switch (type) {
-      case 'article':
-        return 'Article';
-      case 'case_study':
-        return 'Case Study';
-      case 'press_release':
-        return 'Press Release';
-      case 'job_posting':
-        return 'Job Posting';
-      case 'linkedin':
-        return 'LinkedIn';
-      default:
-        return 'Evidence';
+  // Format date to be more readable
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    try {
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      }).format(date);
+    } catch (e) {
+      return 'Invalid date';
     }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg border border-gray-100">
-      <div className="p-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
-          <div className="flex items-center">
-            <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-gray-100 mr-4">
-              <img src={competitor.logo} alt={`${competitor.name} logo`} className="w-full h-full object-cover" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-gray-900">{competitor.name}</h3>
-              <p className="text-sm text-gray-600">{competitor.industry}</p>
-            </div>
-          </div>
-
-          <div className="mt-2 sm:mt-0 flex items-center">
-            <span className={`text-xs px-3 py-1 rounded-full border ${getRelationshipBadgeColor(competitor.relationshipStrength)} capitalize`}>
-              {competitor.relationshipStrength} relationship
-            </span>
+    <div className="bg-white rounded-lg shadow-md p-6 mb-4 border border-gray-200">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          {/* Logo placeholder - you would replace this with actual logos */}
+         
+          <div>
+            <h3 className="text-xl font-semibold">{competitor.name}</h3>
+            <p className="text-gray-600">{competitor.industry}</p>
           </div>
         </div>
-
-        <div className="mb-4">
-          <p className="text-gray-700">
-            {competitor.relationshipDetails[0].description.substring(0, 100)}
-            {competitor.relationshipDetails[0].description.length > 100 ? '...' : ''}
-          </p>
+        <div>
+          <span className={getRelationshipBadge(competitor.relationshipStrength)}>
+            {competitor.relationshipStrength.charAt(0).toUpperCase() + competitor.relationshipStrength.slice(1)} Relationship
+          </span>
         </div>
-
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors"
-        >
-          {expanded ? (
-            <>
-              <span>View less</span>
-              <ChevronUp className="ml-1 h-4 w-4" />
-            </>
-          ) : (
-            <>
-              <span>View all {competitor.relationshipDetails.length} collaborations</span>
-              <ChevronDown className="ml-1 h-4 w-4" />
-            </>
-          )}
-        </button>
       </div>
 
-      {expanded && (
-        <div className="bg-blue-50 p-6 border-t border-blue-100 animate-fadeIn">
-          <h4 className="font-semibold text-gray-900 mb-4">Collaboration Details</h4>
+      {/* Summary displayed for all cards */}
+      <div className="mt-4">
+        {competitor.relationshipDetails && competitor.relationshipDetails[0]?.title !== 'No public evidence found' ? (
+          <p className="text-gray-700">
+            {competitor.relationshipDetails.length} partnership{competitor.relationshipDetails.length !== 1 ? 's' : ''} found with {competitor.name}
+          </p>
+        ) : (
+          <p className="text-gray-700">No collaboration evidence found through public sources</p>
+        )}
+      </div>
+
+      {/* Toggle button */}
+      <button 
+        onClick={() => setExpanded(!expanded)}
+        className="mt-4 text-blue-600 hover:text-blue-800 flex items-center"
+      >
+        <span>View {expanded ? 'less' : 'all'} {competitor.relationshipDetails.length} collaboration{competitor.relationshipDetails.length !== 1 ? 's' : ''}</span>
+        <svg 
+          className={`ml-1 h-5 w-5 transform ${expanded ? 'rotate-180' : ''} transition-transform`}
+          fill="none" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          strokeWidth="2" 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+        >
+          <path d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </button>
+
+      {/* Expanded details */}
+      {expanded && competitor.relationshipDetails[0]?.title !== 'No public evidence found' && (
+        <div className="mt-4 border-t pt-4">
+          <h4 className="text-lg font-medium mb-2">Partnership Details</h4>
           <div className="space-y-4">
-            {competitor.relationshipDetails.map((detail) => (
-              <div key={detail.id} className="bg-white p-4 rounded-md border border-blue-200">
-                <div className="flex justify-between items-start mb-2">
-                  <h5 className="font-medium text-gray-900">{detail.title}</h5>
-                  <span className="text-sm text-gray-500">{detail.year}</span>
-                </div>
-                <p className="text-gray-700 mb-3">{detail.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
-                    {getEvidenceTypeIcon(detail.evidenceType)}
-                  </span>
-                  {detail.evidenceUrl && (
-                    <a
-                      href={detail.evidenceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 text-sm flex items-center"
-                    >
-                      View evidence
-                      <ExternalLink className="ml-1 h-3 w-3" />
-                    </a>
-                  )}
+            {competitor.relationshipDetails.map((detail, index) => (
+              <div key={index} className="p-3 bg-gray-50 rounded-md">
+                <h5 className="font-medium text-blue-700 hover:underline">
+                  <a href={detail.url} target="_blank" rel="noopener noreferrer">
+                    {detail.title}
+                  </a>
+                </h5>
+                <p className="text-sm text-gray-600 mt-1">{detail.snippet}</p>
+                <div className="mt-2 text-xs text-gray-500">
+                  Last updated: {formatDate(detail.lastScraped)}
                 </div>
               </div>
             ))}
