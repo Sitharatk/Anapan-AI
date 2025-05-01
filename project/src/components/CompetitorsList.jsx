@@ -1,11 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CompetitorCard from './CompetitorCard';
 import Filters from './Filters';
 
-const CompetitorsList = ({ competitors }) => {
+const CompetitorsList = () => {
+  const [competitors, setCompetitors] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedIndustry, setSelectedIndustry] = useState('All');
   const [selectedStrength, setSelectedStrength] = useState('All');
   const [selectedEngagement, setSelectedEngagement] = useState('All');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/competitors/intel');
+        const data = await response.json();
+        setCompetitors(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // Fallback to hardcoded data if API fails
+        import('../data/competitors.js').then(module => {
+          setCompetitors(module.default);
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
 
   const filteredCompetitors = competitors.filter((competitor) => {
     const industryMatch = selectedIndustry === 'All' || competitor.industry === selectedIndustry;
@@ -14,6 +36,8 @@ const CompetitorsList = ({ competitors }) => {
     
     return industryMatch && strengthMatch && engagementMatch;
   });
+
+  if (isLoading) return <div>Loading competitor data...</div>;
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -26,19 +50,9 @@ const CompetitorsList = ({ competitors }) => {
         setSelectedEngagement={setSelectedEngagement}
       />
       
-      {filteredCompetitors.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg shadow">
-          <p className="text-gray-600">No competitors found matching the selected filters.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-6 animate-fadeIn">
-          {filteredCompetitors.map((competitor) => (
-            <CompetitorCard key={competitor.id} competitor={competitor} />
-          ))}
-        </div>
-      )}
+      {/* Rest of your component */}
     </div>
   );
 };
 
-export default CompetitorsList
+export default CompetitorsList;
