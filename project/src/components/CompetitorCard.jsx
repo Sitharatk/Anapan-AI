@@ -52,7 +52,8 @@ const CompetitorCard = ({ competitor }) => {
       <div className="mt-4">
         {competitor.relationshipDetails && competitor.relationshipDetails[0]?.title !== 'No public evidence found' ? (
           <p className="text-gray-700">
-            {competitor.relationshipDetails.length} partnership{competitor.relationshipDetails.length !== 1 ? 's' : ''} found with {competitor.name}
+{(competitor.relationshipDetails?.length || 0)} partnership{(competitor.relationshipDetails?.length !== 1 ? 's' : '')} found...
+
           </p>
         ) : (
           <p className="text-gray-700">No collaboration evidence found through public sources</p>
